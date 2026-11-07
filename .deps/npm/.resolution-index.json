@@ -3,6 +3,11 @@
     "__sources__": {}
   },
   "contracts/StayinBooking.sol": {
-    "__sources__": {}
+    "__sources__": {
+      "contracts/StayinBooking.sol": {
+        "content": " // SPDX-License-Identifier: MIT\r\n\r\npragma solidity ^0.8.24;\r\n\r\ncontract StayinBooking {\r\n\r\n    address public immutable hotelOwner;\r\n\r\n\r\n    uint256 public nextBookingId = 1;\r\n\r\n     enum BookingStatus {\r\n        Confirmed,\r\n        Cancelled\r\n    }\r\n\r\n    struct Room {\r\n        uint256 roomId;\r\n        string roomName;\r\n        uint256 pricePerNight;\r\n        bool isActive;\r\n    }\r\n\r\n    struct Booking {\r\n        uint256 bookingId;\r\n        uint256 roomId;\r\n        address guest;\r\n        uint256 checkIn;\r\n        uint256 checkOut;\r\n        BookingStatus status;\r\n    }\r\n\r\n    mapping(uint256 => Room) private rooms;\r\n    mapping(uint256 => Booking) private bookings;\r\n\r\n    mapping(uint256 => uint256[]) private roomBookings;\r\n\r\n    event RoomRegistered(\r\n        uint256 indexed roomId,\r\n        string roomName\r\n    );\r\n\r\n    event BookingCreated(\r\n        uint256 indexed bookingId,\r\n        uint256 indexed roomId,\r\n        address indexed guest,\r\n        uint256 checkIn,\r\n        uint256 checkOut\r\n    );\r\n\r\n    event BookingCancelled(\r\n        uint256 indexed bookingId,\r\n        address cancelledBy\r\n    );\r\n\r\n    constructor() {\r\n        hotelOwner = msg.sender;\r\n    }\r\n    \r\n}\r\n",
+        "file": "contracts/StayinBooking.sol"
+      }
+    }
   }
 }
