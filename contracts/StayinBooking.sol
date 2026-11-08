@@ -53,8 +53,79 @@ contract StayinBooking {
         address cancelledBy
     );
 
+    
+modifier onlyHotelOwner() {
+    require(
+        msg.sender == hotelOwner,
+        "Only hotel owner can perform this action"
+    );
+    _;
+}
+
+
     constructor() {
         hotelOwner = msg.sender;
     }
     
+function registerRoom(
+    uint256 roomId,
+    string calldata roomName,
+    uint256 pricePerNight
+) external onlyHotelOwner {
+
+    require(roomId > 0, "Invalid room ID");
+
+    require(
+        rooms[roomId].roomId == 0,
+        "Room already exists"
+    );
+
+    require(
+        bytes(roomName).length > 0,
+        "Room name required"
+    );
+
+    require(
+        pricePerNight > 0,
+        "Invalid room price"
+    );
+
+    rooms[roomId] = Room({
+        roomId: roomId,
+        roomName: roomName,
+        pricePerNight: pricePerNight,
+        isActive: true
+    });
+
+    emit RoomRegistered(roomId, roomName);
+}
+
+function checkAvailability(
+    uint256 roomId,
+    uint256 checkIn,
+    uint256 checkOut
+) public view returns (bool) {
+    require(rooms[roomId].roomId != 0, "Room does not exist");
+    require(rooms[roomId].isActive, "Room is not active");
+    require(checkIn > block.timestamp, "Check-in must be in the future");
+    require(checkOut > checkIn, "Invalid booking dates");
+
+    uint256[] storage existingBookings = roomBookings[roomId];
+
+    for (uint256 i = 0; i < existingBookings.length; i++) {
+        Booking storage existingBooking = bookings[existingBookings[i]];
+
+        if (existingBooking.status == BookingStatus.Confirmed) {
+            bool overlaps =
+                checkIn < existingBooking.checkOut &&
+                checkOut > existingBooking.checkIn;
+
+            if (overlaps) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
 }
