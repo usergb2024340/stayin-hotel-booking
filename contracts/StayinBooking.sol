@@ -128,4 +128,45 @@ function checkAvailability(
 
     return true;
 }
+
+function bookRoom(
+    uint256 roomId,
+    uint256 checkIn,
+    uint256 checkOut
+) external returns (uint256) {
+
+    require(
+        checkAvailability(roomId, checkIn, checkOut),
+        "Room is not available"
+    );
+
+    uint256 bookingId = nextBookingId;
+
+    bookings[bookingId] = Booking({
+        bookingId: bookingId,
+        roomId: roomId,
+        guest: msg.sender,
+        checkIn: checkIn,
+        checkOut: checkOut,
+        status: BookingStatus.Confirmed
+    });
+
+    roomBookings[roomId].push(bookingId);
+
+    nextBookingId++;
+
+    emit BookingCreated(
+        bookingId,
+        roomId,
+        msg.sender,
+        checkIn,
+        checkOut
+    );
+
+    return bookingId;
 }
+}
+
+
+
+
