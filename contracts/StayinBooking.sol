@@ -165,6 +165,31 @@ function bookRoom(
 
     return bookingId;
 }
+
+function cancelBooking(uint256 bookingId) external {
+
+    require(
+        bookings[bookingId].bookingId != 0,
+        "Booking does not exist"
+    );
+
+    Booking storage booking = bookings[bookingId];
+
+    require(
+        msg.sender == booking.guest || msg.sender == hotelOwner,
+        "Not authorised to cancel this booking"
+    );
+
+    require(
+        booking.status == BookingStatus.Confirmed,
+        "Booking already cancelled"
+    );
+
+    booking.status = BookingStatus.Cancelled;
+
+    emit BookingCancelled(bookingId, msg.sender);
+}
+
 }
 
 
