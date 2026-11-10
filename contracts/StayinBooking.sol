@@ -189,6 +189,58 @@ function cancelBooking(uint256 bookingId) external {
 
     emit BookingCancelled(bookingId, msg.sender);
 }
+function getBooking(uint256 bookingId)
+    external
+    view
+    returns (
+        uint256,
+        uint256,
+        address,
+        uint256,
+        uint256,
+        BookingStatus
+    )
+{
+    require(
+        bookings[bookingId].bookingId != 0,
+        "Booking does not exist"
+    );
+
+    Booking storage booking = bookings[bookingId];
+
+    return (
+        booking.bookingId,
+        booking.roomId,
+        booking.guest,
+        booking.checkIn,
+        booking.checkOut,
+        booking.status
+    );
+}
+function getRoom(uint256 roomId)
+    external
+    view
+    returns (
+        uint256,
+        string memory,
+        uint256,
+        bool
+    )
+{
+    require(
+        rooms[roomId].roomId != 0,
+        "Room does not exist"
+    );
+
+    Room storage room = rooms[roomId];
+
+    return (
+        room.roomId,
+        room.roomName,
+        room.pricePerNight,
+        room.isActive
+    );
+}
 
 }
 
